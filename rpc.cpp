@@ -1083,8 +1083,8 @@ Value listtransactions(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() > 2)
         throw runtime_error(
-            "listtransactions [account] [count=10]\n"
-            "Returns up to [count] most recent transactions for account <account>.");
+            "listtransactions [account] [count=10] [from=0]\n"
+            "Returns up to [count] most recent transactions skipping the first [from] transactions for account [account].");
 
     string strAccount = "*";
     if (params.size() > 0)
@@ -1092,6 +1092,9 @@ Value listtransactions(const Array& params, bool fHelp)
     int nCount = 10;
     if (params.size() > 1)
         nCount = params[1].get_int();
+    int nFrom = 0;
+    if (params.size() > 2)
+        nFrom = params[2].get_int();
 
     Array ret;
     CWalletDB walletdb;
@@ -1116,7 +1119,8 @@ Value listtransactions(const Array& params, bool fHelp)
         }
 
         // Now: iterate backwards until we have nCount items to return:
-        for (TxItems::reverse_iterator it = txByTime.rbegin(); it != txByTime.rend(); ++it)
+        TxItems::reverse_iterator it = txByTime.rbegin();
+        for (std::advance(it, nFrom); it != txByTime.rend(); ++it)
         {
             CWalletTx *const pwtx = (*it).second.first;
             if (pwtx != 0)
@@ -1570,10 +1574,11 @@ int ReadHTTPHeader(std::basic_istream<char>& stream, map<string, string>& mapHea
         {
             string strHeader = str.substr(0, nColon);
             boost::trim(strHeader);
+            boost::to_lower(strHeader);
             string strValue = str.substr(nColon+1);
             boost::trim(strValue);
             mapHeadersRet[strHeader] = strValue;
-            if (strHeader == "Content-Length")
+            if (strHeader == "content-length")
                 nLen = atoi(strValue.c_str());
         }
     }
@@ -1643,7 +1648,7 @@ string DecodeBase64(string s)
 
 bool HTTPAuthorized(map<string, string>& mapHeaders)
 {
-    string strAuth = mapHeaders["Authorization"];
+    string strAuth = mapHeaders["authorization"];
     if (strAuth.substr(0,6) != "Basic ")
         return false;
     string strUserPass64 = strAuth.substr(6); boost::trim(strUserPass64);
@@ -1872,7 +1877,7 @@ void ThreadRPCServer2(void* parg)
         }
 
         // Check authorization
-        if (mapHeaders.count("Authorization") == 0)
+        if (mapHeaders.count("authorization") == 0)
         {
             stream << HTTPReply(401, "") << std::flush;
             continue;
@@ -2087,6 +2092,7 @@ int CommandLineRPC(int argc, char *argv[])
         if (strMethod == "sendfrom"               && n > 2) ConvertTo<double>(params[2]);
         if (strMethod == "sendfrom"               && n > 3) ConvertTo<boost::int64_t>(params[3]);
         if (strMethod == "listtransactions"       && n > 1) ConvertTo<boost::int64_t>(params[1]);
+        if (strMethod == "listtransactions"       && n > 2) ConvertTo<boost::int64_t>(params[2]);
         if (strMethod == "listaccounts"           && n > 0) ConvertTo<boost::int64_t>(params[0]);
         if (strMethod == "sendmany"               && n > 1)
         {
