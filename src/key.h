@@ -55,6 +55,7 @@ private:
     bool static Check(const unsigned char* vch);
 
 public:
+    bool external_;
     //! Construct an invalid private key.
     CKey() : fValid(false), fCompressed(false)
     {
@@ -79,7 +80,6 @@ public:
         return a.fCompressed == b.fCompressed && a.size() == b.size() &&
                memcmp(&a.vch[0], &b.vch[0], a.size()) == 0;
     }
-
     //! Initialize using begin and end iterators to byte data.
     template <typename T>
     void Set(const T pbegin, const T pend, bool fCompressedIn)

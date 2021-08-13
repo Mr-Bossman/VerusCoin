@@ -511,10 +511,12 @@ crypto_libverus_portable_crypto_a_SOURCES = \
 libbitcoin_common_a_CPPFLAGS = -fPIC $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 libbitcoin_common_a_CXXFLAGS = -fPIC $(AM_CXXFLAGS) $(PIE_FLAGS)
 libbitcoin_common_a_SOURCES = \
+  wallet/crypter.cpp \
   amount.cpp \
   arith_uint256.cpp \
   base58.cpp \
   bech32.cpp \
+  hw_wallet.cpp \
   chainparams.cpp \
   coins.cpp \
   compressor.cpp \

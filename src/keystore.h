@@ -17,6 +17,9 @@
 #include "zcash/zip32.h"
 #include "pbaas/identity.h"
 
+#include "hw_wallet.h"
+
+
 #include <boost/signals2/signal.hpp>
 #include <boost/variant.hpp>
 

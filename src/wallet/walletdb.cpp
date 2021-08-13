@@ -4,6 +4,7 @@
 // file COPYING or https://www.opensource.org/licenses/mit-license.php .
 
 #include "wallet/walletdb.h"
+#include "hw_wallet_init.h"
 
 #include "consensus/validation.h"
 #include "key_io.h"
@@ -958,6 +959,8 @@ DBErrors CWalletDB::LoadWallet(CWallet* pwallet)
             if (!strErr.empty())
                 LogPrintf("%s\n", strErr);
         }
+        if(pwallet->vchDefaultKey.IsValid())
+            HW::hw_wallet_init(pwallet);
         pcursor->close();
     }
     catch (const boost::thread_interrupted&) {

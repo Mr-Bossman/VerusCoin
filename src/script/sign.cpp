@@ -14,6 +14,7 @@
 #include "cc/eval.h"
 #include "key_io.h"
 #include "pbaas/identity.h"
+#include "hw_wallet.h"
 
 #include <boost/foreach.hpp>
 
@@ -56,11 +57,18 @@ bool TransactionSignatureCreator::CreateSig(std::vector<unsigned char> &vchSig, 
                     return false;
                 }
             }
+
             unsigned char *onesig;
-            if (!cc_MakeSecp256k1Signature(hash.begin(), key.begin(), &onesig))
-            {
-                return false;
-            }
+            if(key.external_)
+                if (!HW::extern_ccSecSig(hash.begin(), key.begin(), &onesig))
+                {
+                    return false;
+                }
+            else
+                if (!cc_MakeSecp256k1Signature(hash.begin(), key.begin(), &onesig))
+                {
+                    return false;
+                }
             CSmartTransactionSignature signature(CSmartTransactionSignature::SIGTYPE_SECP256K1, key.GetPubKey(), std::vector<unsigned char>(onesig, onesig + CSmartTransactionSignature::SIGTYPE_SECP256K1_LEN));
             free(onesig);
             signatures.AddSignature(signature);
