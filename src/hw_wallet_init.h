@@ -1,6 +1,9 @@
 #include "key_io.h"
 #include "wallet/wallet.h"
 #include "wallet/walletdb.h"
+#ifndef HWW__H
+#define HWW__H
 namespace HW {
-    void hw_wallet_init(CWallet *pwalletMain);
+    std::string hw_wallet_connect(CWallet *pwalletMain,std::string port);
 }
+#endif

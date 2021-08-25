@@ -46,6 +46,7 @@ BITCOIN_INCLUDES += -I$(srcdir)/cryptoconditions/src/asn
 BITCOIN_INCLUDES += -I$(srcdir)/snark
 BITCOIN_INCLUDES += -I$(srcdir)/snark/libsnark
 BITCOIN_INCLUDES += -I$(srcdir)/univalue/include
+BITCOIN_INCLUDES += -I$(srcdir)/serial/include
 
 LIBBITCOIN_SERVER=libbitcoin_server.a -lcurl
 LIBBITCOIN_WALLET=libbitcoin_wallet.a
@@ -56,6 +57,7 @@ LIBBITCOIN_CRYPTO=crypto/libbitcoin_crypto.a
 LIBVERUS_CRYPTO=crypto/libverus_crypto.a
 LIBVERUS_PORTABLE_CRYPTO=crypto/libverus_portable_crypto.a
 LIBSECP256K1=secp256k1/libsecp256k1.la
+LIBSERIAL=serial/build/devel/lib/libserial_static.a
 LIBCRYPTOCONDITIONS=cryptoconditions/libcryptoconditions_core.la
 LIBSNARK=snark/libsnark.a
 LIBUNIVALUE=univalue/libunivalue.la
@@ -74,6 +76,10 @@ if ENABLE_WALLET
 LIBBITCOIN_WALLET=libbitcoin_wallet.a
 endif
 
+ 
+
+$(LIBSERIAL):
+	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) -C serial
 $(LIBSECP256K1): $(wildcard secp256k1/src/*) $(wildcard secp256k1/include/*)
 	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) -C $(@D) $(@F) OPTFLAGS="-O3 -march=$(PLATFORM_VARIANT) -g "
 
@@ -433,6 +439,7 @@ libbitcoin_wallet_a_SOURCES = \
   wallet/wallet_ismine.cpp \
   wallet/walletdb.cpp \
   zcash/zip32.cpp \
+  hw_wallet.cpp \
   $(BITCOIN_CORE_H) \
   $(LIBZCASH_H)
 
@@ -516,7 +523,6 @@ libbitcoin_common_a_SOURCES = \
   arith_uint256.cpp \
   base58.cpp \
   bech32.cpp \
-  hw_wallet.cpp \
   chainparams.cpp \
   coins.cpp \
   compressor.cpp \
@@ -561,6 +567,7 @@ libbitcoin_common_a_SOURCES = \
   veruslaunch.cpp \
   transaction_builder.cpp \
   utiltest.cpp \
+  hw_wallet_links.cpp \
   $(BITCOIN_CORE_H) \
   $(LIBZCASH_H)
 
@@ -618,6 +625,7 @@ verusd_SOURCES += bitcoind-res.rc
 endif
 
 verusd_LDADD = \
+  $(LIBSERIAL) \
   $(LIBBITCOIN_SERVER) \
   $(LIBBITCOIN_COMMON) \
   $(LIBUNIVALUE) \
@@ -639,6 +647,7 @@ verusd_LDADD += $(LIBBITCOIN_WALLET)
 endif
 
 verusd_LDADD += \
+  $(LIBSERIAL) \
   $(BOOST_LIBS) \
   $(BDB_LIBS) \
   $(SSL_LIBS) \
@@ -694,6 +703,7 @@ verus_LDADD = \
 
 if ENABLE_WALLET
 wallet_utility_LDADD = \
+  $(LIBSERIAL) \
 	$(LIBBITCOIN_WALLET) \
 	$(LIBBITCOIN_COMMON) \
   $(LIBUNIVALUE) \

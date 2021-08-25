@@ -959,8 +959,6 @@ DBErrors CWalletDB::LoadWallet(CWallet* pwallet)
             if (!strErr.empty())
                 LogPrintf("%s\n", strErr);
         }
-        if(pwallet->vchDefaultKey.IsValid())
-            HW::hw_wallet_init(pwallet);
         pcursor->close();
     }
     catch (const boost::thread_interrupted&) {

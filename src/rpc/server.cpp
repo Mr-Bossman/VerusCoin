@@ -461,6 +461,7 @@ static const CRPCCommand vRPCCommands[] =
 
     { "util",             "invalidateblock",        &invalidateblock,        true  },
     { "util",             "reconsiderblock",        &reconsiderblock,        true  },
+    { "util",               "hwconnect",         &hwconnect,         true  },
     /* Not shown in help */
     { "hidden",             "setmocktime",            &setmocktime,            true  },
 #ifdef ENABLE_WALLET

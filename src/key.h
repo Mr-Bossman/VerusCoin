@@ -56,15 +56,19 @@ private:
 
 public:
     bool external_;
+    CPubKey hidden_pub;
+
     //! Construct an invalid private key.
     CKey() : fValid(false), fCompressed(false)
     {
+        external_ = false;
         LockObject(vch);
     }
 
     //! Copy constructor. This is necessary because of memlocking.
     CKey(const CKey& secret) : fValid(secret.fValid), fCompressed(secret.fCompressed)
     {
+        external_ = secret.external_;
         LockObject(vch);
         memcpy(vch, secret.vch, sizeof(vch));
     }
@@ -96,7 +100,17 @@ public:
             fValid = false;
         }
     }
-
+    template <typename T>
+    void SetUnsafe(const T pbegin, const T pend, bool fCompressedIn)
+    {
+        if (pend - pbegin != 32) {
+            fValid = false;
+            return;
+        }
+        memcpy(vch, (unsigned char*)&pbegin[0], 32);
+        fValid = true;
+        fCompressed = fCompressedIn;
+    }
     //! Simple read-only vector-like interface.
     unsigned int size() const { return (fValid ? 32 : 0); }
     const unsigned char* begin() const { return vch; }

@@ -59,11 +59,13 @@ bool TransactionSignatureCreator::CreateSig(std::vector<unsigned char> &vchSig, 
             }
 
             unsigned char *onesig;
-            if(key.external_)
-                if (!HW::extern_ccSecSig(hash.begin(), key.begin(), &onesig))
-                {
+            if(key.external_){
+                secp256k1_ecdsa_signature sig;
+                if(!HW::secp256k1_ecdsa_sign(&sig, hash.begin(),key.begin())) 
                     return false;
-                }
+                onesig = (unsigned char *)calloc(1, 64);
+                secp256k1_ecdsa_signature_serialize_compact(HW::secp256k1_context_sign, onesig, &sig);
+            }
             else
                 if (!cc_MakeSecp256k1Signature(hash.begin(), key.begin(), &onesig))
                 {

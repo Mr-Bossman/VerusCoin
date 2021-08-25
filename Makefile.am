@@ -54,6 +54,7 @@ endif
 dist-hook:
 	-$(MAKE) -C $(top_distdir)/src/leveldb clean
 	-$(MAKE) -C $(top_distdir)/src/secp256k1 distclean
+	-$(MAKE) -C $(top_distdir)/src/serial clean
 	-$(GIT) archive --format=tar HEAD -- src/clientversion.cpp | $(AMTAR) -C $(top_distdir) -xf -
 
 distcheck-hook:

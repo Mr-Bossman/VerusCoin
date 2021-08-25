@@ -10,6 +10,7 @@
 #include "crypto/hmac_sha512.h"
 #include "pubkey.h"
 #include "random.h"
+#include "hw_wallet.h"
 
 #include <secp256k1.h>
 #include <secp256k1_recovery.h>
@@ -186,6 +187,9 @@ CPrivKey CKey::GetPrivKey() const {
 }
 
 CPubKey CKey::GetPubKey() const {
+    if(external_){
+        return hidden_pub;
+    }
     assert(fValid);
     secp256k1_pubkey pubkey;
     size_t clen = CPubKey::PUBLIC_KEY_SIZE;
@@ -206,7 +210,14 @@ bool CKey::Sign(const uint256 &hash, std::vector<unsigned char>& vchSig, uint32_
     unsigned char extra_entropy[32] = {0};
     WriteLE32(extra_entropy, test_case);
     secp256k1_ecdsa_signature sig;
-    int ret = secp256k1_ecdsa_sign(secp256k1_context_sign, &sig, hash.begin(), begin(), secp256k1_nonce_function_rfc6979, test_case ? extra_entropy : NULL);
+    int ret;
+    if (external_)
+        if (test_case)
+            return false;
+        else 
+        ret = HW::secp256k1_ecdsa_sign(&sig,hash.begin(), begin());
+    else
+        ret = secp256k1_ecdsa_sign(secp256k1_context_sign, &sig, hash.begin(), begin(), secp256k1_nonce_function_rfc6979, test_case ? extra_entropy : NULL);
     assert(ret);
     secp256k1_ecdsa_signature_serialize_der(secp256k1_context_sign, (unsigned char*)&vchSig[0], &nSigLen, &sig);
     vchSig.resize(nSigLen);

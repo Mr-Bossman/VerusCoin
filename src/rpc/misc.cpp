@@ -19,6 +19,7 @@
 #ifdef ENABLE_WALLET
 #include "wallet/wallet.h"
 #include "wallet/walletdb.h"
+#include "hw_wallet_init.h"
 #endif
 
 #include <stdint.h>
@@ -630,6 +631,31 @@ CScript _createmultisig_redeemScript(const UniValue& params)
         throw runtime_error(
                 strprintf("redeemScript exceeds size limit: %d > %d", (int)result.size(), CScript::MAX_SCRIPT_ELEMENT_SIZE));
 
+    return result;
+}
+
+UniValue hwconnect(const UniValue& params, bool fHelp){
+    if (fHelp || params.size() != 1)
+    {
+        string msg = "hwconnect serialport\n"
+            "\nConnect to a serial port.\n"
+            "It returns the connection status\n"
+            "\nArguments:\n"
+            "1. serialport      (string, required) The serial port the wallet is connected to, \"/dev/ttyUSB_\" or \"COM_\".\n"
+            "\nResult:\n"
+            "  \"status\":\"connection status\",  (string) The status or the connection \"connected\" or \"error: _____\".\n"
+            "\nExamples:\n"
+            "\nConnect to a serial port.\n"
+            + HelpExampleCli("hwconnect", "/dev/ttyUSB1") +
+            "or\n"
+            + HelpExampleCli("hwconnect", "COM777") +
+            "\nAs a json rpc call\n"
+            + HelpExampleRpc("hwconnect", "/dev/ttyUSB1")
+        ;
+        throw runtime_error(msg);
+    }
+    UniValue result(UniValue::VOBJ);
+    result.push_back(Pair("status",HW::hw_wallet_connect(pwalletMain,params[0].get_str())));
     return result;
 }
 
