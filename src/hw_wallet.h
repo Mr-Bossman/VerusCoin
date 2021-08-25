@@ -9,5 +9,7 @@
 namespace HW{
 extern secp256k1_context* secp256k1_context_sign;
 extern std::function<int(secp256k1_ecdsa_signature *, const unsigned char *, const unsigned char *)> secp256k1_ecdsa_sign;
+extern std::function<int(secp256k1_ecdsa_recoverable_signature *, const unsigned char *, const unsigned char *)> secp256k1_ecdsa_sign_recoverable;
+
 }
 #endif

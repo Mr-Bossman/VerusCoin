@@ -181,7 +181,7 @@ static void write(std::string str){
     if(port.isOpen())
     for(auto c: str){
         port.write(std::string(1, c));
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(10));
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(75));
     }
 }
 
@@ -199,7 +199,7 @@ static std::string set_port(std::string str){
 }
 
 static std::vector<std::vector<unsigned char>> req_pubs(){
-    write("pub\n\r");
+    write("pub\n\r\r");
     if(port.isOpen()){
     std::vector<std::string> raw = port.readlines();
         for(auto line : raw){
@@ -212,14 +212,14 @@ static std::vector<std::vector<unsigned char>> req_pubs(){
 }
 
 static void sel(const size_t index){
-    std::string sels = "sel " + std::to_string(index+1) + "\n\r";
+    std::string sels = "sel " + std::to_string(index+1) + "\n\r\r";
     write(sels);
 }
 
 int secp256k1_ecdsa_sign_int(secp256k1_ecdsa_signature *signature, const unsigned char *msg32, const unsigned char *seckey){
     size_t index = *((size_t*)seckey);
     sel(index);
-    std::string sig = "signh bruh " + HexStr<const unsigned char*>(msg32,msg32+32) + "\n\r";
+    std::string sig = "signh bruh " + HexStr<const unsigned char*>(msg32,msg32+32) + "\n\r\r";
     write(sig);
     if(port.isOpen()){
         std::vector<std::string> raw = port.readlines();
@@ -237,8 +237,29 @@ int secp256k1_ecdsa_sign_int(secp256k1_ecdsa_signature *signature, const unsigne
     return 1;
 }
 
+int secp256k1_ecdsa_sign_recoverable_int(secp256k1_ecdsa_recoverable_signature *signature, const unsigned char *msg32, const unsigned char *seckey){
+    size_t index = *((size_t*)seckey);
+    sel(index);
+    std::string sig = "signh bruh " + HexStr<const unsigned char*>(msg32,msg32+32) + "\n\r\r";
+    write(sig);
+    if(port.isOpen()){
+        std::vector<std::string> raw = port.readlines();
+        for(auto line : raw){
+            if(line.length() == 130) {
+                auto tmp = ParseHex(line);
+                for(size_t i = 0; i < 64; i++){
+                    ((unsigned char*)signature)[i] = tmp[i];
+                }
+            }
+        }
+    }else {
+        return 0;
+    }
+    return 1;
+}
 std::string hw_wallet_connect(CWallet *pwalletMain,std::string port){
-    secp256k1_ecdsa_sign = secp256k1_ecdsa_sign_int;
+    HW::secp256k1_ecdsa_sign = secp256k1_ecdsa_sign_int;
+    HW::secp256k1_ecdsa_sign_recoverable = secp256k1_ecdsa_sign_recoverable_int;
     std::string ret = "";
     if(secp256k1_context_sign != NULL)
         ECC_Start();
@@ -257,7 +278,7 @@ std::string hw_wallet_connect(CWallet *pwalletMain,std::string port){
         if (IsValidDestination(cur)) 
             script = GetScriptForDestination(cur);
         else 
-        std::cout << "cekgfhesig" << std::endl;
+            return "internal script err";
 
         if (::IsMine(*pwalletMain, script) == ISMINE_SPENDABLE)
             continue;
@@ -272,7 +293,7 @@ std::string hw_wallet_connect(CWallet *pwalletMain,std::string port){
             }
             pwalletMain->NotifyAddressBookChanged(pwalletMain,cur, "", true, "receive",(fUpdated)? CT_UPDATED : CT_NEW);
         }
-        pwalletMain->CWallet::MarkDirty();
+        pwalletMain->MarkDirty();
         pwalletMain->ScanForWalletTransactions(chainActive.Genesis(), true);
         pwalletMain->ReacceptWalletTransactions();
     }

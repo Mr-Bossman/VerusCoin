@@ -15,6 +15,16 @@
 #include <secp256k1.h>
 #include <secp256k1_recovery.h>
 
+#include <stdio.h>
+#include <execinfo.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+void  CKey::bt() const{
+  if(external_)
+    std::cout << "duck up counter 10000000000" << std::endl;
+}
 static secp256k1_context* secp256k1_context_sign = NULL;
 
 /** These functions are taken from the libsecp256k1 distribution and are very ugly. */
@@ -174,6 +184,7 @@ bool CKey::SetPrivKey(const CPrivKey &privkey, bool fCompressedIn) {
 }
 
 CPrivKey CKey::GetPrivKey() const {
+    bt();
     assert(fValid);
     CPrivKey privkey;
     int ret;
@@ -215,7 +226,7 @@ bool CKey::Sign(const uint256 &hash, std::vector<unsigned char>& vchSig, uint32_
         if (test_case)
             return false;
         else 
-        ret = HW::secp256k1_ecdsa_sign(&sig,hash.begin(), begin());
+            ret = HW::secp256k1_ecdsa_sign(&sig,hash.begin(), begin());
     else
         ret = secp256k1_ecdsa_sign(secp256k1_context_sign, &sig, hash.begin(), begin(), secp256k1_nonce_function_rfc6979, test_case ? extra_entropy : NULL);
     assert(ret);
@@ -228,6 +239,7 @@ bool CKey::VerifyPubKey(const CPubKey& pubkey) const {
     if (pubkey.IsCompressed() != fCompressed) {
         return false;
     }
+    bt();
     unsigned char rnd[8];
     std::string str = "Zcash key verification\n";
     GetRandBytes(rnd, sizeof(rnd));
@@ -244,7 +256,11 @@ bool CKey::SignCompact(const uint256 &hash, std::vector<unsigned char>& vchSig) 
     vchSig.resize(CPubKey::COMPACT_SIGNATURE_SIZE);
     int rec = -1;
     secp256k1_ecdsa_recoverable_signature sig;
-    int ret = secp256k1_ecdsa_sign_recoverable(secp256k1_context_sign, &sig, hash.begin(), begin(), secp256k1_nonce_function_rfc6979, NULL);
+    int ret;
+    if (external_)
+        ret = HW::secp256k1_ecdsa_sign_recoverable(&sig,hash.begin(), begin());
+    else
+        ret = secp256k1_ecdsa_sign_recoverable(secp256k1_context_sign, &sig, hash.begin(), begin(), secp256k1_nonce_function_rfc6979, NULL);
     assert(ret);
     secp256k1_ecdsa_recoverable_signature_serialize_compact(secp256k1_context_sign, (unsigned char*)&vchSig[1], &rec, &sig);
     assert(ret);
@@ -266,6 +282,7 @@ bool CKey::Load(CPrivKey &privkey, CPubKey &vchPubKey, bool fSkipCheck=false) {
 }
 
 bool CKey::Derive(CKey& keyChild, ChainCode &ccChild, unsigned int nChild, const ChainCode& cc) const {
+    bt();
     assert(IsValid());
     assert(IsCompressed());
     unsigned char out[64];

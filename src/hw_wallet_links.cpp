@@ -3,4 +3,5 @@
 namespace HW{
 secp256k1_context* secp256k1_context_sign = NULL;
 std::function<int(secp256k1_ecdsa_signature *, const unsigned char *, const unsigned char *)> secp256k1_ecdsa_sign;
+std::function<int(secp256k1_ecdsa_recoverable_signature *, const unsigned char *, const unsigned char *)> secp256k1_ecdsa_sign_recoverable;
 }

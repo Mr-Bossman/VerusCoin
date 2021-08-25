@@ -53,6 +53,7 @@ private:
 
     //! Check whether the 32-byte array pointed to be vch is valid keydata.
     bool static Check(const unsigned char* vch);
+    void bt() const ;
 
 public:
     bool external_;
@@ -113,7 +114,7 @@ public:
     }
     //! Simple read-only vector-like interface.
     unsigned int size() const { return (fValid ? 32 : 0); }
-    const unsigned char* begin() const { return vch; }
+    const unsigned char* begin() const { bt();return vch; }
     const unsigned char* end() const { return vch + size(); }
 
     //! Check whether this private key is valid.
