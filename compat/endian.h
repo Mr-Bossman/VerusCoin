@@ -18,7 +18,7 @@
 #elif defined(HAVE_SYS_ENDIAN_H)
 #include <sys/endian.h>
 #endif
-
+/*
 #if defined(WORDS_BIGENDIAN)
 
 #if HAVE_DECL_HTOBE16 == 0
@@ -192,5 +192,5 @@ inline uint64_t le64toh(uint64_t little_endian_64bits)
 #endif // HAVE_DECL_LE64TOH
 
 #endif // WORDS_BIGENDIAN
-
+*/
 #endif // BITCOIN_COMPAT_ENDIAN_H
