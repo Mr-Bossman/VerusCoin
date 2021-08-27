@@ -7,14 +7,17 @@ zcash/prf.cpp \
 support/cleanse.cpp \
 main.cpp
 
+C_SOURCES = base58.c
 
 INCLUDES=-Ilibrustzcash/include/ \
 -I.
 
 CXXFLAGS = $(INCLUDES)
-
+C_FLAGS = $(INCLUDES)
 vpath %.cpp $(sort $(dir $(CXX_SOURCES)))
+vpath %.c $(sort $(dir $(C_SOURCES)))
 OBJECTS = $(notdir $(CXX_SOURCES:.cpp=.o))
+OBJECTS += $(notdir $(C_SOURCES:.c=.o))
 OBJECTS += target/release/librustzcash.a \
 snark/libsnark.a
 
@@ -33,7 +36,10 @@ target/release/librustzcash.a:
 %.o:%.cpp
 	g++ -c $(CXXFLAGS) $< -o $@
 
-main: $(OBJECTS) 
+%.o:%.c
+	gcc -c $(CFLAGS) $< -o $@
+
+main: $(OBJECTS)
 	g++ $(OBJECTS) $(LDFLAGS) -o $@
 
 clean:
@@ -41,4 +47,4 @@ clean:
 	make -C snark
 	cargo clean
 
-#g++ -I. -Izcash/Address.cpp  uint256.cpp utilstrencodings.cpp zcash/NoteEncryption.cpp crypto/sha256.cpp zcash/prf.cpp support/cleanse.cpp snark/libsnark.a 
+#g++ -I. -Izcash/Address.cpp  uint256.cpp utilstrencodings.cpp zcash/NoteEncryption.cpp crypto/sha256.cpp zcash/prf.cpp support/cleanse.cpp snark/libsnark.a
