@@ -4,8 +4,7 @@
 // file COPYING or https://www.opensource.org/licenses/mit-license.php .
 
 #include "cleanse.h"
-
-#include <openssl/crypto.h>
+void OPENSSL_cleanse(void *ptr,size_t len);
 
 void memory_cleanse(void *ptr, size_t len)
 {
