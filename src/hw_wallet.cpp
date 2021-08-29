@@ -11,6 +11,8 @@
 #include <boost/thread/thread.hpp>
 #include "ui_interface.h"
 #include "serial/serial.h"
+#include "keystore.h"
+
 namespace HW{
 
 /* static*/
@@ -284,6 +286,7 @@ std::string hw_wallet_connect(CWallet *pwalletMain,std::string port){
 
         if (::IsMine(*pwalletMain, script) == ISMINE_SPENDABLE)
             continue;
+                    pwalletMain->MarkDirty();
         {
             pwalletMain->LoadKey(to_Fpriv(i),get_index<CPubKey>(i));
             bool fUpdated = false;
@@ -295,7 +298,8 @@ std::string hw_wallet_connect(CWallet *pwalletMain,std::string port){
             }
             pwalletMain->NotifyAddressBookChanged(pwalletMain,cur, "", true, "receive",(fUpdated)? CT_UPDATED : CT_NEW);
         }
-        pwalletMain->MarkDirty();
+        pwalletMain->mapKeyMetadata[cur].nCreateTime = 1;
+        pwalletMain->nTimeFirstKey = 1;
         pwalletMain->ScanForWalletTransactions(chainActive.Genesis(), true);
         pwalletMain->ReacceptWalletTransactions();
         }
