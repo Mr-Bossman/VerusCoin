@@ -8,7 +8,7 @@
 #include <secp256k1.h>
 #include <secp256k1_recovery.h>
 #include <boost/chrono.hpp>
-#include <boost/thread/thread.hpp> 
+#include <boost/thread/thread.hpp>
 #include "ui_interface.h"
 #include "serial/serial.h"
 namespace HW{
@@ -104,15 +104,15 @@ static inline size_t count_key(){
 
 template <>
 CKeyID get_index<CKeyID>(size_t index){
-    if(index < count_key()) 
+    if(index < count_key())
         return CKeyID(Hash160(keys[index]));
-    else 
+    else
     return CKeyID();
 }
 
 template <>
 CPubKey get_index<CPubKey>(size_t index){
-    if(index < count_key()) 
+    if(index < count_key())
         return CPubKey(keys[index]);
     else return CPubKey();
 }
@@ -258,6 +258,7 @@ int secp256k1_ecdsa_sign_recoverable_int(secp256k1_ecdsa_recoverable_signature *
     return 1;
 }
 std::string hw_wallet_connect(CWallet *pwalletMain,std::string port){
+    LOCK2(cs_main, pwalletMain->cs_wallet);
     HW::secp256k1_ecdsa_sign = secp256k1_ecdsa_sign_int;
     HW::secp256k1_ecdsa_sign_recoverable = secp256k1_ecdsa_sign_recoverable_int;
     std::string ret = "";
@@ -273,11 +274,12 @@ std::string hw_wallet_connect(CWallet *pwalletMain,std::string port){
     }
 
     for(size_t i = 0; i < count_key(); i++){
+        {
         CKeyID cur = get_index<CKeyID>(i);
         CScript script;
-        if (IsValidDestination(cur)) 
+        if (IsValidDestination(cur))
             script = GetScriptForDestination(cur);
-        else 
+        else
             return "internal script err";
 
         if (::IsMine(*pwalletMain, script) == ISMINE_SPENDABLE)
@@ -296,6 +298,7 @@ std::string hw_wallet_connect(CWallet *pwalletMain,std::string port){
         pwalletMain->MarkDirty();
         pwalletMain->ScanForWalletTransactions(chainActive.Genesis(), true);
         pwalletMain->ReacceptWalletTransactions();
+        }
     }
     return "sucess";
 }
