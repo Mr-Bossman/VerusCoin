@@ -659,6 +659,32 @@ UniValue hwconnect(const UniValue& params, bool fHelp){
     return result;
 }
 
+UniValue rescan(const UniValue& params, bool fHelp){
+    if (fHelp || params.size() != 0)
+    {
+        string msg = "rescan\n"
+            "\n Rescan wallet\n"
+            "It returns the nothing\n"
+            "\nArguments:\n"
+            "nothing\n"
+            "\nResult:\n"
+            "  \"done\":\"\".\n"
+            "\nExamples:\n"
+            "\nrescan\n"
+            + HelpExampleCli("rescan","") +
+            "\nAs a json rpc call\n"
+            + HelpExampleRpc("rescan","")
+        ;
+        throw runtime_error(msg);
+    }
+    UniValue result(UniValue::VOBJ);
+    pwalletMain->MarkDirty();
+    pwalletMain->ScanForWalletTransactions(chainActive.Genesis(), true);
+    pwalletMain->ReacceptWalletTransactions();
+    result.push_back("done");
+    return result;
+}
+
 UniValue createmultisig(const UniValue& params, bool fHelp)
 {
     if (fHelp || params.size() < 2 || params.size() > 2)
