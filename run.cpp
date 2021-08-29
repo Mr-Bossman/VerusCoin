@@ -31,11 +31,16 @@ uint252 uint252_sha256(std::string str)
     return uint252(hash);
 }
 
-int main(int argc, char *argv[]){
+int bust(){
 
     std::string str = "crust";
     auto k = libzcash::SproutSpendingKey(uint252_sha256(str));
     auto addr = k.address();
     std::cout << add_to_string(addr) << std::endl;
     return 0;
+}
+extern "C"{
+    int crust(){
+        return bust();
+    }
 }

@@ -8,7 +8,7 @@
 
 #include "crypto/ripemd160.h"
 #include "crypto/sha256.h"
-#include "crypto/verus_hash.h"
+//#include "crypto/verus_hash.h"
 #include "prevector.h"
 #include "serialize.h"
 #include "uint256.h"
@@ -266,6 +266,7 @@ public:
 };
 
 /** A writer stream (for serialization) that computes a 256-bit Verus hash. */
+/*
 class CVerusHashWriter
 {
 private:
@@ -300,8 +301,9 @@ public:
         return (*this);
     }
 };
-
+*/
 /** A writer stream (for serialization) that computes a 256-bit Verus hash with key initialized to Haraka standard. */
+/*
 class CVerusHashV2Writer
 {
 private:
@@ -336,8 +338,9 @@ public:
         return (*this);
     }
 };
-
+*/
 /** A writer stream (for serialization) that computes a 256-bit VerusHash 2.0 hash */
+/*
 class CVerusHashV2bWriter
 {
 private:
@@ -374,8 +377,9 @@ public:
         return (*this);
     }
 };
-
+*/
 /** Compute the 256-bit hash of an object's serialization. */
+/*
 template<typename T>
 uint256 SerializeHash(const T& obj, int nType=SER_GETHASH, int nVersion=PROTOCOL_VERSION)
 {
@@ -383,35 +387,35 @@ uint256 SerializeHash(const T& obj, int nType=SER_GETHASH, int nVersion=PROTOCOL
     ss << obj;
     return ss.GetHash();
 }
+*/
+/** Compute the 256-bit Verus hash of an object's serialization. */
+// template<typename T>
+// uint256 SerializeVerusHash(const T& obj, int nType=SER_GETHASH, int nVersion=PROTOCOL_VERSION)
+// {
+//     CVerusHashWriter ss(nType, nVersion);
+//     ss << obj;
+//     return ss.GetHash();
+// }
 
 /** Compute the 256-bit Verus hash of an object's serialization. */
-template<typename T>
-uint256 SerializeVerusHash(const T& obj, int nType=SER_GETHASH, int nVersion=PROTOCOL_VERSION)
-{
-    CVerusHashWriter ss(nType, nVersion);
-    ss << obj;
-    return ss.GetHash();
-}
-
-/** Compute the 256-bit Verus hash of an object's serialization. */
-template<typename T>
-uint256 SerializeVerusHashV2(const T& obj, int nType=SER_GETHASH, int nVersion=PROTOCOL_VERSION)
-{
-    CVerusHashV2Writer ss(nType, nVersion);
-    ss << obj;
-    return ss.GetHash();
-}
+// template<typename T>
+// uint256 SerializeVerusHashV2(const T& obj, int nType=SER_GETHASH, int nVersion=PROTOCOL_VERSION)
+// {
+//     CVerusHashV2Writer ss(nType, nVersion);
+//     ss << obj;
+//     return ss.GetHash();
+// }
 
 /** Compute the 256-bit Verus hash of an object's serialization with the final step including
  *  a carryless multiply-based hash as fill for the unused space.
  */
-template<typename T>
-uint256 SerializeVerusHashV2b(const T& obj, int solutionVersion=SOLUTION_VERUSHHASH_V2, int nType=SER_GETHASH, int nVersion=PROTOCOL_VERSION)
-{
-    CVerusHashV2bWriter ss(nType, nVersion, solutionVersion);
-    ss << obj;
-    return ss.GetHash();
-}
+// template<typename T>
+// uint256 SerializeVerusHashV2b(const T& obj, int solutionVersion=SOLUTION_VERUSHHASH_V2, int nType=SER_GETHASH, int nVersion=PROTOCOL_VERSION)
+// {
+//     CVerusHashV2bWriter ss(nType, nVersion, solutionVersion);
+//     ss << obj;
+//     return ss.GetHash();
+// }
 
 unsigned int MurmurHash3(unsigned int nHashSeed, const std::vector<unsigned char>& vDataToHash);
 

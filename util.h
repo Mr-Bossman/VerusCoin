@@ -18,16 +18,16 @@
 #include "tinyformat.h"
 #include "utiltime.h"
 
-#include <atomic>
-#include <exception>
+//#include <atomic>
+//#include <exception>
 #include <map>
 #include <stdint.h>
 #include <string>
 #include <vector>
 
-#include <boost/filesystem/path.hpp>
-#include <boost/signals2/signal.hpp>
-#include <boost/thread/exceptions.hpp>
+//#include <boost/filesystem/path.hpp>
+//#include <boost/signals2/signal.hpp>
+//#include <boost/thread/exceptions.hpp>
 
 #include "komodo_defs.h"
 
@@ -40,7 +40,7 @@ class CTranslationInterface
 {
 public:
     /** Translate a message to the native language of the user. */
-    boost::signals2::signal<std::string (const char* psz)> Translate;
+    //boost::signals2::signal<std::string (const char* psz)> Translate;
 };
 
 extern std::map<std::string, std::string> mapArgs;
@@ -64,7 +64,8 @@ extern bool PBAAS_TESTMODE;
  */
 inline std::string _(const char* psz)
 {
-    boost::optional<std::string> rv = translationInterface.Translate(psz);
+    // = translationInterface.Translate(psz)
+    boost::optional<std::string> rv;
     return rv ? (*rv) : psz;
 }
 
@@ -118,43 +119,43 @@ static inline bool error(const char* format)
     return false;
 }
 
-const boost::filesystem::path &ZC_GetParamsDir();
+//const boost::filesystem::path &ZC_GetParamsDir();
 
 void PrintExceptionContinue(const std::exception *pex, const char* pszThread);
 void ParseParameters(int argc, const char*const argv[]);
-void FileCommit(FILE *fileout);
-bool TruncateFile(FILE *file, unsigned int length);
-int RaiseFileDescriptorLimit(int nMinFD);
-void AllocateFileRange(FILE *file, unsigned int offset, unsigned int length);
-bool RenameOver(boost::filesystem::path src, boost::filesystem::path dest);
-bool TryCreateDirectory(const boost::filesystem::path& p);
-boost::filesystem::path GetDefaultDataDir();
-boost::filesystem::path GetDefaultDataDir(std::string chainName);
-const boost::filesystem::path &GetDataDir(bool fNetSpecific = true);
-const boost::filesystem::path GetDataDir(std::string chainName);
-void ClearDatadirCache();
-boost::filesystem::path GetConfigFile();
-boost::filesystem::path GetConfigFile(std::string chainName);
+// void FileCommit(FILE *fileout);
+// bool TruncateFile(FILE *file, unsigned int length);
+// int RaiseFileDescriptorLimit(int nMinFD);
+// void AllocateFileRange(FILE *file, unsigned int offset, unsigned int length);
+//bool RenameOver(boost::filesystem::path src, boost::filesystem::path dest);
+//bool TryCreateDirectory(const boost::filesystem::path& p);
+//boost::filesystem::path GetDefaultDataDir();
+//boost::filesystem::path GetDefaultDataDir(std::string chainName);
+//const boost::filesystem::path &GetDataDir(bool fNetSpecific = true);
+//const boost::filesystem::path GetDataDir(std::string chainName);
+//void ClearDatadirCache();
+//boost::filesystem::path GetConfigFile();
+//boost::filesystem::path GetConfigFile(std::string chainName);
 #ifndef _WIN32
-boost::filesystem::path GetPidFile();
-void CreatePidFile(const boost::filesystem::path &path, pid_t pid);
+//boost::filesystem::path GetPidFile();
+//void CreatePidFile(const boost::filesystem::path &path, pid_t pid);
 #endif
 class missing_zcash_conf : public std::runtime_error {
 public:
-    missing_zcash_conf() : std::runtime_error("Missing .conf file") { }
+  //  missing_zcash_conf() : std::runtime_error("Missing .conf file") { }
 };
 void ReadConfigFile(std::map<std::string, std::string>& mapSettingsRet, std::map<std::string, std::vector<std::string> >& mapMultiSettingsRet);
 bool ReadConfigFile(std::string chainName,
                     std::map<std::string, std::string>& mapSettingsRet,
                     std::map<std::string, std::vector<std::string> >& mapMultiSettingsRet);
 #ifdef _WIN32
-boost::filesystem::path GetSpecialFolderPath(int nFolder, bool fCreate = true);
+//boost::filesystem::path GetSpecialFolderPath(int nFolder, bool fCreate = true);
 #endif
-boost::filesystem::path GetTempPath();
-void OpenDebugLog();
-void ShrinkDebugFile();
-void runCommand(const std::string& strCommand);
-const boost::filesystem::path GetExportDir();
+//boost::filesystem::path GetTempPath();
+//void OpenDebugLog();
+//void ShrinkDebugFile();
+//void runCommand(const std::string& strCommand);
+//const boost::filesystem::path GetExportDir();
 
 /** Returns privacy notice (for -version, -help and metrics screen) */
 std::string PrivacyInfo();
@@ -260,8 +261,8 @@ void RenameThread(const char* name);
 template <typename Callable> void TraceThread(const char* name,  Callable func)
 {
     std::string s = strprintf("zcash-%s", name);
-    RenameThread(s.c_str());
-    try
+    //RenameThread(s.c_str());
+    /*try
     {
         LogPrintf("%s thread start\n", name);
         func();
@@ -279,7 +280,7 @@ template <typename Callable> void TraceThread(const char* name,  Callable func)
     catch (...) {
         PrintExceptionContinue(NULL, name);
         throw;
-    }
+    }*/
 }
 
 #define KOMODO_ASSETCHAIN_MAXLEN 65

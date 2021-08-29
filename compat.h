@@ -33,16 +33,16 @@
 #include <ws2tcpip.h>
 #else
 #include <fcntl.h>
-#include <sys/mman.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <net/if.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <arpa/inet.h>
-#include <ifaddrs.h>
+//#include <sys/mman.h>
+//#include <sys/socket.h>
+//#include <sys/types.h>
+//#include <net/if.h>
+//#include <netinet/in.h>
+//#include <netinet/tcp.h>
+//#include <arpa/inet.h>
+//#include <ifaddrs.h>
 #include <limits.h>
-#include <netdb.h>
+//#include <netdb.h>
 #include <unistd.h>
 #endif
 

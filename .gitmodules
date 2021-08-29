@@ -1,3 +1,6 @@
 [submodule "VerusCoin"]
 	path = librustzcash
 	url = https://github.com/Mr-Bossman/VerusCoin.git
+[submodule "libsodium"]
+	path = libsodium
+	url = https://github.com/jedisct1/libsodium.git
