@@ -18,24 +18,26 @@
 //
 // See https://github.com/rust-lang/rfcs/pull/2585 for more background.
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
+#![feature(restricted_std)]
 
 use bellman::groth16::{Parameters, PreparedVerifyingKey, Proof};
 use blake2s_simd::Params as Blake2sParams;
 use bls12_381::Bls12;
 use group::{cofactor::CofactorGroup, GroupEncoding};
-use libc::{c_uchar, size_t};
+type size_t = usize;
+type c_uchar = u8;
 use rand_core::{OsRng, RngCore};
-use std::fs::File;
+//use std::fs::File;
 use std::io::BufReader;
-use std::path::{Path, PathBuf};
+//use std::path::{Path, PathBuf};
 use std::slice;
 use subtle::CtOption;
-use tracing::info;
+//use tracing::info;
 
 #[cfg(not(target_os = "windows"))]
-use std::ffi::OsStr;
+//use std::ffi::OsStr;
 #[cfg(not(target_os = "windows"))]
-use std::os::unix::ffi::OsStrExt;
+//use std::os::unix::ffi::OsStrExt;
 
 #[cfg(target_os = "windows")]
 use std::ffi::OsString;
@@ -57,7 +59,7 @@ use zcash_primitives::{
 };
 use zcash_proofs::{
     circuit::sapling::TREE_DEPTH as SAPLING_TREE_DEPTH,
-    load_parameters,
+    //load_parameters,
     sapling::{SaplingProvingContext, SaplingVerificationContext},
     sprout,
 };
@@ -66,7 +68,7 @@ mod blake2b;
 mod ed25519;
 mod metrics_ffi;
 mod streams_ffi;
-mod tracing_ffi;
+//mod tracing_ffi;
 
 mod address_ffi;
 mod history_ffi;
@@ -85,7 +87,7 @@ static mut SPROUT_GROTH16_VK: Option<PreparedVerifyingKey<Bls12>> = None;
 
 static mut SAPLING_SPEND_PARAMS: Option<Parameters<Bls12>> = None;
 static mut SAPLING_OUTPUT_PARAMS: Option<Parameters<Bls12>> = None;
-static mut SPROUT_GROTH16_PARAMS_PATH: Option<PathBuf> = None;
+//static mut SPROUT_GROTH16_PARAMS_PATH: Option<PathBuf> = None;
 
 static mut ORCHARD_PK: Option<orchard::circuit::ProvingKey> = None;
 static mut ORCHARD_VK: Option<orchard::circuit::VerifyingKey> = None;
@@ -110,6 +112,7 @@ fn fixed_scalar_mult(from: &[u8; 32], p_g: &jubjub::SubgroupPoint) -> jubjub::Su
 
 /// Loads the zk-SNARK parameters into memory and saves paths as necessary.
 /// Only called once.
+/*
 #[no_mangle]
 pub extern "C" fn librustzcash_init_zksnark_params(
     #[cfg(not(target_os = "windows"))] spend_path: *const u8,
@@ -162,7 +165,7 @@ pub extern "C" fn librustzcash_init_zksnark_params(
     let params = load_parameters(spend_path, output_path, sprout_path);
 
     // Generate Orchard parameters.
-    info!(target: "main", "Loading Orchard parameters");
+    //info!(target: "main", "Loading Orchard parameters");
     let orchard_pk = orchard::circuit::ProvingKey::build();
     let orchard_vk = orchard::circuit::VerifyingKey::build();
 
@@ -181,7 +184,7 @@ pub extern "C" fn librustzcash_init_zksnark_params(
         ORCHARD_VK = Some(orchard_vk);
     }
 }
-
+*/
 /// Writes the "uncommitted" note value for empty leaves of the Merkle tree.
 ///
 /// `result` must be a valid pointer to 32 bytes which will be written.
@@ -681,6 +684,7 @@ pub extern "C" fn librustzcash_sapling_final_check(
 }
 
 /// Sprout JoinSplit proof generation.
+/*
 #[no_mangle]
 pub extern "C" fn librustzcash_sprout_prove(
     proof_out: *mut [c_uchar; GROTH_PROOF_SIZE],
@@ -761,7 +765,7 @@ pub extern "C" fn librustzcash_sprout_prove(
         .write(&mut (unsafe { &mut *proof_out })[..])
         .expect("should be able to serialize a proof");
 }
-
+*/
 /// Sprout JoinSplit proof verification.
 #[no_mangle]
 pub extern "C" fn librustzcash_sprout_verify(

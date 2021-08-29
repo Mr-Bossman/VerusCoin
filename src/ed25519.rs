@@ -3,7 +3,8 @@
 // file COPYING or https://www.opensource.org/licenses/mit-license.php .
 
 use ed25519_zebra::{Signature, SigningKey, VerificationKey};
-use libc::{c_uchar, size_t};
+type size_t = usize;
+type c_uchar = u8;
 use rand_core::OsRng;
 use std::convert::TryFrom;
 use std::slice;

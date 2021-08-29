@@ -1,6 +1,6 @@
 use std::{mem, ptr};
 
-use libc::size_t;
+type size_t = usize;
 use orchard::{
     bundle::Authorized,
     keys::OutgoingViewingKey,
@@ -8,7 +8,7 @@ use orchard::{
     Bundle, OrchardDomain,
 };
 use rand_core::OsRng;
-use tracing::{debug, error};
+//use tracing::{debug, error};
 use zcash_note_encryption::try_output_recovery_with_ovk;
 use zcash_primitives::transaction::{
     components::{orchard as orchard_serialization, Amount},
@@ -67,7 +67,7 @@ pub extern "C" fn orchard_bundle_parse(
             true
         }
         Err(e) => {
-            error!("Failed to parse Orchard bundle: {}", e);
+            //error!("Failed to parse Orchard bundle: {}", e);
             false
         }
     }
@@ -85,7 +85,7 @@ pub extern "C" fn orchard_bundle_serialize(
     match orchard_serialization::write_v5_bundle(bundle, writer) {
         Ok(()) => true,
         Err(e) => {
-            error!("{}", e);
+            //error!("{}", e);
             false
         }
     }
@@ -122,7 +122,7 @@ pub extern "C" fn orchard_bundle_validate(bundle: *const Bundle<Authorized, Amou
         let vk = unsafe { crate::ORCHARD_VK.as_ref() }.unwrap();
 
         if bundle.verify_proof(vk).is_err() {
-            error!("Invalid Orchard proof");
+            //error!("Invalid Orchard proof");
             return false;
         }
 
@@ -248,9 +248,9 @@ pub extern "C" fn orchard_batch_add_bundle(
                 ),
             });
         }
-        (_, _, None) => error!("orchard_batch_add_bundle() called without txid!"),
-        (Some(_), None, Some(txid)) => debug!("Tx {} has no Orchard component", txid),
-        (None, Some(_), _) => debug!("Orchard BatchValidator not provided, assuming disabled."),
+        (_, _, None) => (),//error!("orchard_batch_add_bundle() called without txid!"),
+        (Some(_), None, Some(txid)) => (),//debug!("Tx {} has no Orchard component", txid),
+        (None, Some(_), _) => (),//debug!("Orchard BatchValidator not provided, assuming disabled."),
         (None, None, _) => (), // Boring, don't bother logging.
     }
 }
@@ -270,7 +270,7 @@ pub extern "C" fn orchard_batch_validate(batch: *const BatchValidator) -> bool {
         match validator.verify(OsRng) {
             Ok(()) => true,
             Err(e) => {
-                error!("RedPallas batch validation failed: {}", e);
+                //error!("RedPallas batch validation failed: {}", e);
                 // TODO: Try sub-batches to figure out which signatures are invalid. We can
                 // postpone this for now:
                 // - For per-transaction batching (when adding to the mempool), we don't care
@@ -282,7 +282,7 @@ pub extern "C" fn orchard_batch_validate(batch: *const BatchValidator) -> bool {
     } else {
         // The orchard::BatchValidator C++ class uses null to represent a disabled batch
         // validator.
-        debug!("Orchard BatchValidator not provided, assuming disabled.");
+        //debug!("Orchard BatchValidator not provided, assuming disabled.");
         true
     }
 }

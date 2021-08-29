@@ -1,8 +1,9 @@
 use std::{ptr, slice};
 
 use blake2b_simd::Hash;
-use libc::{c_uchar, size_t};
-use tracing::error;
+type size_t = usize;
+type c_uchar = u8;
+//use tracing::error;
 use zcash_primitives::{
     consensus::BranchId,
     legacy::Script,
@@ -33,7 +34,7 @@ pub extern "C" fn zcash_transaction_digests(
     let tx = match Transaction::read(tx_bytes, BranchId::Canopy) {
         Ok(tx) => tx,
         Err(e) => {
-            error!("Failed to parse transaction: {}", e);
+           // error!("Failed to parse transaction: {}", e);
             return false;
         }
     };
@@ -74,7 +75,7 @@ pub extern "C" fn zcash_transaction_precomputed_init(
     let tx = match Transaction::read(tx_bytes, BranchId::Canopy) {
         Ok(tx) => tx,
         Err(e) => {
-            error!("Failed to parse transaction: {}", e);
+            //error!("Failed to parse transaction: {}", e);
             return ptr::null_mut();
         }
     };
@@ -116,21 +117,21 @@ pub extern "C" fn zcash_transaction_transparent_signature_digest(
     let precomputed_tx = if let Some(res) = unsafe { precomputed_tx.as_ref() } {
         res
     } else {
-        error!("Invalid precomputed transaction");
+        //error!("Invalid precomputed transaction");
         return false;
     };
     let script_code =
         match Script::read(unsafe { slice::from_raw_parts(script_code, script_code_len) }) {
             Ok(res) => res,
             Err(e) => {
-                error!("Invalid scriptCode: {}", e);
+                //error!("Invalid scriptCode: {}", e);
                 return false;
             }
         };
     let value = match Amount::from_i64(value) {
         Ok(res) => res,
         Err(()) => {
-            error!("Invalid amount");
+            //error!("Invalid amount");
             return false;
         }
     };

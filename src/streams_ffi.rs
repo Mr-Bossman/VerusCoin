@@ -1,8 +1,9 @@
 use std::io;
 use std::ptr::NonNull;
 
-use libc::{c_long, c_void, size_t};
-
+type size_t = usize;
+type c_long = i64;
+type c_void = i8;
 pub type StreamObj = NonNull<c_void>;
 pub type ReadCb =
     unsafe extern "C" fn(obj: Option<StreamObj>, pch: *mut u8, size: size_t) -> c_long;

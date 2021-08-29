@@ -1,4 +1,5 @@
-use libc::{c_char, c_double};
+/*type c_char = i8;
+type c_double = f64;
 use metrics::{try_recorder, GaugeValue, Key, Label};
 use metrics_exporter_prometheus::PrometheusBuilder;
 use std::ffi::CStr;
@@ -23,7 +24,7 @@ pub extern "C" fn metrics_run(
             s.to_str().ok().and_then(|s| {
                 s.parse()
                     .map_err(|e| {
-                        error!("Invalid -metricsallowip argument '{}': {}", s, e);
+                        //error!("Invalid -metricsallowip argument '{}': {}", s, e);
                     })
                     .ok()
             })
@@ -54,7 +55,7 @@ pub extern "C" fn metrics_run(
             {
                 Some(addr) => addr,
                 None => {
-                    error!("Invalid -metricsbind argument");
+                    //error!("Invalid -metricsbind argument");
                     return false;
                 }
             }
@@ -238,3 +239,4 @@ pub extern "C" fn metrics_record_histogram(key: *mut FfiKey, value: c_double) {
         }
     }
 }
+*/

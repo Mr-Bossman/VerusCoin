@@ -12,7 +12,7 @@ use zcash_primitives::{
     transaction::components::Amount,
 };
 
-use crate::orchard_ffi::{error, CppStreamReader, CppStreamWriter, ReadCb, StreamObj, WriteCb};
+use crate::orchard_ffi::{ CppStreamReader, CppStreamWriter, ReadCb, StreamObj, WriteCb};
 
 pub const MERKLE_DEPTH: u8 = 32;
 pub const MAX_CHECKPOINTS: usize = 100;
@@ -56,7 +56,7 @@ pub extern "C" fn orchard_merkle_frontier_parse(
     match read_frontier_v1(reader) {
         Ok(parsed) => Box::into_raw(Box::new(parsed)),
         Err(e) => {
-            error!("Failed to parse Orchard bundle: {}", e);
+            //error!("Failed to parse Orchard bundle: {}", e);
             ptr::null_mut()
         }
     }
@@ -78,7 +78,7 @@ pub extern "C" fn orchard_merkle_frontier_serialize(
     match write_frontier_v1(writer, frontier) {
         Ok(()) => true,
         Err(e) => {
-            error!("{}", e);
+            //error!("{}", e);
             false
         }
     }
@@ -96,7 +96,7 @@ pub extern "C" fn orchard_merkle_frontier_append_bundle(
     if let Some(bundle) = unsafe { bundle.as_ref() } {
         for action in bundle.actions().iter() {
             if !tree.append(&MerkleCrhOrchardOutput::from_cmx(action.cmx())) {
-                error!("Orchard note commitment tree is full.");
+                //error!("Orchard note commitment tree is full.");
                 return false;
             }
         }
@@ -188,7 +188,7 @@ pub extern "C" fn incremental_sinsemilla_tree_parse(
     match read_tree(reader) {
         Ok(parsed) => Box::into_raw(Box::new(parsed)),
         Err(e) => {
-            error!("Failed to parse Orchard bundle: {}", e);
+            //error!("Failed to parse Orchard bundle: {}", e);
             ptr::null_mut()
         }
     }
@@ -209,7 +209,7 @@ pub extern "C" fn incremental_sinsemilla_tree_serialize(
     match write_tree(writer, tree) {
         Ok(()) => true,
         Err(e) => {
-            error!("{}", e);
+            //error!("{}", e);
             false
         }
     }
@@ -227,7 +227,7 @@ pub extern "C" fn incremental_sinsemilla_tree_append_bundle(
     if let Some(bundle) = unsafe { bundle.as_ref() } {
         for action in bundle.actions().iter() {
             if !tree.append(&MerkleCrhOrchardOutput::from_cmx(action.cmx())) {
-                error!("Orchard note commitment tree is full.");
+                //error!("Orchard note commitment tree is full.");
                 return false;
             }
         }

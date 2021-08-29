@@ -4,7 +4,11 @@ use std::{
     ptr::{self, NonNull},
 };
 
-use libc::{c_char, c_void};
+type size_t = usize;
+type c_uchar = u8;
+type c_char = i8;
+type c_void = i8;
+
 use zcash_address::{unified, FromAddress, Network, ToAddress, ZcashAddress};
 use zcash_primitives::sapling;
 
@@ -29,7 +33,7 @@ fn network_from_cstr(network: *const c_char) -> Option<Network> {
         "test" => Some(Network::Test),
         "regtest" => Some(Network::Regtest),
         s => {
-            tracing::error!("Unsupported network type string '{}'", s);
+            //tracing::error!("Unsupported network type string '{}'", s);
             None
         }
     }
@@ -60,11 +64,11 @@ impl UnifiedAddressHelper {
         unknown_cb: Option<UnknownReceiverCb>,
     ) -> bool {
         if self.net != network {
-            tracing::error!(
+            /*tracing::error!(
                 "Unified Address is for {:?} but node is on {:?}",
                 self.net,
                 network
-            );
+            );*/
             return false;
         }
 
@@ -93,7 +97,7 @@ impl UnifiedAddressHelper {
                     // constituent address does not meet the validation requirements of
                     // its Receiver Encoding.
                     if sapling::PaymentAddress::from_bytes(&data).is_none() {
-                        tracing::error!("Unified Address contains invalid Sapling receiver");
+                        //tracing::error!("Unified Address contains invalid Sapling receiver");
                         false
                     } else {
                         unsafe { (sapling_cb.unwrap())(ua_obj, data.as_ptr()) }
@@ -132,7 +136,7 @@ pub extern "C" fn zcash_address_parse_unified(
     let addr = match ZcashAddress::try_from_encoded(encoded) {
         Ok(addr) => addr,
         Err(e) => {
-            tracing::error!("{}", e);
+            //tracing::error!("{}", e);
             return false;
         }
     };
@@ -140,7 +144,7 @@ pub extern "C" fn zcash_address_parse_unified(
     let ua: UnifiedAddressHelper = match addr.convert() {
         Ok(ua) => ua,
         Err(e) => {
-            tracing::error!("{}", e);
+            //tracing::error!("{}", e);
             return false;
         }
     };
@@ -203,7 +207,7 @@ pub extern "C" fn zcash_address_serialize_unified(
     let ua: unified::Address = match receivers.try_into() {
         Ok(ua) => ua,
         Err(e) => {
-            tracing::error!("{}", e);
+            //tracing::error!("{}", e);
             return ptr::null_mut();
         }
     };

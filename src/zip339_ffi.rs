@@ -1,4 +1,5 @@
-use libc::{c_char, size_t};
+type size_t = usize;
+type c_char = i8;
 use std::{
     convert::{TryFrom, TryInto},
     ffi::{CStr, CString},

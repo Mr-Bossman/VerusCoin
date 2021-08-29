@@ -3,7 +3,8 @@
 // file COPYING or https://www.opensource.org/licenses/mit-license.php .
 
 use blake2b_simd::{State, PERSONALBYTES};
-use libc::{c_uchar, size_t};
+type size_t = usize;
+type c_uchar = u8;
 use std::ptr;
 use std::slice;
 
