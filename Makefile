@@ -84,6 +84,7 @@ snark/libsnark.a:
 
 target/thumbv7em-none-eabihf/debug/librustzcash.a:
 	cargo build --lib --target thumbv7em-none-eabihf -Z build-std=core,std,panic_abort --no-default-features -j10
+	$(PREFIX)-ar t target/thumbv7em-none-eabihf/debug/librustzcash.a | grep compiler_builtins | xargs -n 15 -I % $(PREFIX)-ar dv target/thumbv7em-none-eabihf/debug/librustzcash.a %
 
 libsodium/libsodium.a:
 	#$(shell cd libsodium && ./configure --host=$(PREFIX)  --prefix=$(WPATH)sodium CFLAGS='$(CFLAGS)' LDFLAGS='--specs=nosys.specs')
