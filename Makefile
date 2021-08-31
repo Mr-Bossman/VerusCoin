@@ -55,8 +55,8 @@ INCLUDES=-Ilibrustzcash/include/ \
 -I./sodium/include
 
 DEFINES =
-CXXFLAGS = $(INCLUDES) $(DEFINES) $(MCU) -MMD -MP -fpermissive
-CFLAGS = $(INCLUDES) $(DEFINES) $(MCU) -MMD -MP
+CXXFLAGS = $(INCLUDES) $(DEFINES) $(MCU) -MMD -MP -fpermissive -g -gdwarf-2
+CFLAGS = $(INCLUDES) $(DEFINES) $(MCU) -MMD -MP -g -gdwarf-2
 vpath %.cpp $(sort $(dir $(CXX_SOURCES)))
 vpath %.c $(sort $(dir $(C_SOURCES)))
 OBJECTS = $(addprefix $(OUTPUT)/,$(notdir $(CXX_SOURCES:.cpp=.o)))
