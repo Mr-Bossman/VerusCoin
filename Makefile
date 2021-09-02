@@ -83,7 +83,7 @@ snark/libsnark.a:
 	$(MAKE) -C snark libsnark.a CPPFLAGS="-Wno-deprecated -DBINARY_OUTPUT -DNO_PT_COMPRESSION=1 -fstack-protector-all" CURVE=ALT_BN128 NO_PROCPS=1 NO_DOCS=1 STATIC=1 NO_SUPERCOP=1 FEATUREFLAGS=-DMONTGOMERY_OUTPUT NO_COPY_DEPINST=1 NO_COMPILE_LIBGTEST=1
 
 target/thumbv7em-none-eabihf/debug/librustzcash.a:
-	cargo build --lib --target thumbv7em-none-eabihf -Z build-std=core,std,panic_abort --no-default-features -j10
+	RUSTFLAGS="-C target-feature=mclass  -C target-feature=soft-float -C target-cpu=cortex-m4 -C target-feature=vfp4d16sp -C target-feature=armv7-m -C target-feature=32bit" cargo build --lib --target thumbv7em-none-eabihf -Z build-std=core,std,panic_abort --no-default-features -j10
 	$(PREFIX)-ar t target/thumbv7em-none-eabihf/debug/librustzcash.a | grep compiler_builtins | xargs -n 15 -I % $(PREFIX)-ar dv target/thumbv7em-none-eabihf/debug/librustzcash.a %
 
 libsodium/libsodium.a:
@@ -105,7 +105,7 @@ libs:dirs $(STATIC) $(NAME).a
 	mv $(NAME).a libs || true
 
 $(NAME).a:$(OBJECTS)
-	$(AR) rcs $(LDFLAGS) $@ $^
+	$(AR) rcs $@ $^
 
 
 clean:
