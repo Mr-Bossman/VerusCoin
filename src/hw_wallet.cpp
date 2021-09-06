@@ -242,7 +242,7 @@ int secp256k1_ecdsa_sign_int(secp256k1_ecdsa_signature *signature, const unsigne
 int secp256k1_ecdsa_sign_recoverable_int(secp256k1_ecdsa_recoverable_signature *signature, const unsigned char *msg32, const unsigned char *seckey){
     size_t index = *((size_t*)seckey);
     sel(index);
-    std::string sig = "signh bruh " + HexStr<const unsigned char*>(msg32,msg32+32) + "\n\r\r";
+    std::string sig = "signrech bruh " + HexStr<const unsigned char*>(msg32,msg32+32) + "\n\r\r";
     write(sig);
     if(port.isOpen()){
         std::vector<std::string> raw = port.readlines();

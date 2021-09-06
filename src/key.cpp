@@ -20,10 +20,13 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include "boost/stacktrace.hpp"
 
 void  CKey::bt() const{
-  if(external_)
-    std::cout << "duck up counter 10000000000" << std::endl;
+  if(external_){
+    std::cout << std::endl << boost::stacktrace::stacktrace();
+    std::cout << "\ncalled bt" << std::endl;
+  }
 }
 static secp256k1_context* secp256k1_context_sign = NULL;
 
@@ -164,6 +167,7 @@ static int ec_privkey_export_der(const secp256k1_context *ctx, unsigned char *pr
 }
 
 bool CKey::Check(const unsigned char *vch) {
+    bt();
     return secp256k1_ec_seckey_verify(secp256k1_context_sign, vch);
 }
 
@@ -225,7 +229,7 @@ bool CKey::Sign(const uint256 &hash, std::vector<unsigned char>& vchSig, uint32_
     if (external_)
         if (test_case)
             return false;
-        else 
+        else
             ret = HW::secp256k1_ecdsa_sign(&sig,hash.begin(), begin());
     else
         ret = secp256k1_ecdsa_sign(secp256k1_context_sign, &sig, hash.begin(), begin(), secp256k1_nonce_function_rfc6979, test_case ? extra_entropy : NULL);
@@ -239,7 +243,6 @@ bool CKey::VerifyPubKey(const CPubKey& pubkey) const {
     if (pubkey.IsCompressed() != fCompressed) {
         return false;
     }
-    bt();
     unsigned char rnd[8];
     std::string str = "Zcash key verification\n";
     GetRandBytes(rnd, sizeof(rnd));

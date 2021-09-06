@@ -70,6 +70,7 @@ public:
     CKey(const CKey& secret) : fValid(secret.fValid), fCompressed(secret.fCompressed)
     {
         external_ = secret.external_;
+        hidden_pub = secret.hidden_pub;
         LockObject(vch);
         memcpy(vch, secret.vch, sizeof(vch));
     }
@@ -82,6 +83,7 @@ public:
 
     friend bool operator==(const CKey& a, const CKey& b)
     {
+        bt();
         return a.fCompressed == b.fCompressed && a.size() == b.size() &&
                memcmp(&a.vch[0], &b.vch[0], a.size()) == 0;
     }
